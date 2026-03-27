@@ -33,7 +33,7 @@ export default function keychord(options?: PluginOptions): Plugin[] {
               input,
 
               // We want to produce self-contained files
-              external: [],
+              external: ['chord'],
               output: {
                 codeSplitting: false,
               },
@@ -50,6 +50,8 @@ export default function keychord(options?: PluginOptions): Plugin[] {
   if (options?.vendor?.length) {
     plugins.push(
       viteStaticCopy({
+        /** @see https://github.com/sapphi-red/vite-plugin-static-copy/issues/216 */
+        environment: 'ssr',
         targets: options.vendor?.map((packageName) => ({
           src: `node_modules/${packageName}`,
           dest: "js/vendor",
