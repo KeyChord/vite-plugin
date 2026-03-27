@@ -4,13 +4,16 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  '@keychord/tsconfig': link:../../../../Library/pnpm/global/5/node_modules/@keychord/tsconfig
+
 importers:
 
   .:
     devDependencies:
       '@keychord/tsconfig':
-        specifier: 0.0.0-alpha.0
-        version: 0.0.0-alpha.0
+        specifier: link:../../../../Library/pnpm/global/5/node_modules/@keychord/tsconfig
+        version: link:../../../../Library/pnpm/global/5/node_modules/@keychord/tsconfig
       '@types/node':
         specifier: ^25.5.0
         version: 25.5.0
@@ -51,13 +54,6 @@ packages:
 
   '@jridgewell/sourcemap-codec@1.5.5':
     resolution: {integrity: sha512-cYQ9310grqxueWbl+WuIUIaiUaDcj7WOq5fVhEljNVgRfOUhY9fy2zTvfoqWsnebh8Sl70VScFbICvJnLKB0Og==}
-
-  '@keychord/tsconfig@0.0.0-alpha.0':
-    resolution: {integrity: sha512-UgFkO9I2QBB1bPUNuocZg50y2sBdHgQGWOJd45yiCPVLmniTX1DJiAFAKX8phinhv6lgftJyfztaKykVLWWPFg==}
-    engines: {node: '>=20'}
-
-  '@keychord/types@0.0.0-alpha.0':
-    resolution: {integrity: sha512-Sqsdw8TODAZRGTdubv2UDhVclB8nr4zwqmKnyQHjLuX4c2q8wqGi5LrGAOKd69UbBccSYBgbzYo+XQQznkUsaQ==}
 
   '@microsoft/api-extractor-model@7.33.4':
     resolution: {integrity: sha512-u1LTaNTikZAQ9uK6KG1Ms7nvNedsnODnspq/gH2dcyETWvH4hVNGNDvRAEutH66kAmxA4/necElqGNs1FggC8w==}
@@ -760,9 +756,6 @@ packages:
       supports-color:
         optional: true
 
-  desm@1.3.1:
-    resolution: {integrity: sha512-vgTAOosB1aHrmzjGnzFCbjvXbk8QAOC/36JxJhcBkeAuUy8QwRFxAWBHemiDpUB3cbrBruFUdzpUS21aocvaWg==}
-
   detect-libc@2.1.2:
     resolution: {integrity: sha512-Btj2BOOO83o3WyH59e8MgXsxEQVcarkUOpEYrubB0urwnN10yQ364rsiByU11nZlqWYZm05i/of7io4mzihBtQ==}
     engines: {node: '>=8'}
@@ -1237,14 +1230,6 @@ snapshots:
 
   '@jridgewell/sourcemap-codec@1.5.5': {}
 
-  '@keychord/tsconfig@0.0.0-alpha.0':
-    dependencies:
-      '@keychord/types': 0.0.0-alpha.0
-
-  '@keychord/types@0.0.0-alpha.0':
-    dependencies:
-      desm: 1.3.1
-
   '@microsoft/api-extractor-model@7.33.4(@types/node@25.5.0)':
     dependencies:
       '@microsoft/tsdoc': 0.16.0
@@ -1717,8 +1702,6 @@ snapshots:
   debug@4.4.3:
     dependencies:
       ms: 2.1.3
-
-  desm@1.3.1: {}
 
   detect-libc@2.1.2: {}
 
