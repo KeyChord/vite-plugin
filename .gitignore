@@ -1,3 +1,5 @@
 node_modules
 .DS_Store
 /exports
+pnpm-workspace.yaml
+pnpm-lock.yaml

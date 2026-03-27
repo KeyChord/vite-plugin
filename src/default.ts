@@ -1,11 +1,23 @@
 import type { Plugin } from 'vite-plus';
 import fs from 'node:fs';
 import path from 'node:path'
+import { viteStaticCopy } from 'vite-plugin-static-copy'
 
 const DEFAULT_INPUT_FILES_ROOT_DIRNAME = 'src';
 
-export default function keychord() {
+export type PluginOptions = {
+  vendor?: string[]
+}
+
+export default function keychord(options: PluginOptions) {
   return [
+    options?.vendor?.length && viteStaticCopy({
+      targets: options.vendor?.map(packageName => ({
+          src: `node_modules/${packageName}`,
+          dest: 'vendor',
+          rename: { stripBase: 1 },
+      }))
+    }),
     {
       name: 'keychord',
       config(config) {
@@ -18,8 +30,8 @@ export default function keychord() {
             // Since we target a "server" runtime (LLRT)
             ssr: true,
 
-            // The standard for importing from chords.toml
-            outDir: 'exports',
+            // The standard for importing JavaScript files from chord TOML files `.toml` is to use #js
+            outDir: 'js',
 
             rolldownOptions: {
               input,
