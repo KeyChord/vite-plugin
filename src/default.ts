@@ -2,7 +2,6 @@ import type { Plugin } from "vite-plus";
 import fs from "node:fs";
 import path from "node:path";
 import { viteStaticCopy } from "vite-plugin-static-copy";
-import cleanPlugin from "vite-plugin-clean";
 
 const DEFAULT_INPUT_FILES_ROOT_DIRNAME = "src";
 
@@ -48,7 +47,7 @@ export default function keychord(options?: PluginOptions): any[] {
               input,
 
               // We want to produce self-contained files
-              external: ["chord"],
+              external: ["chord", ...(options?.vendor ?? [])],
             },
           },
           ssr: {
@@ -66,7 +65,7 @@ export default function keychord(options?: PluginOptions): any[] {
         environment: "ssr",
         targets: options.vendor?.map((packageName) => ({
           src: `node_modules/${packageName}/js`,
-          dest: "vendor",
+          dest: "js",
           rename: { stripBase: 1 },
         })),
       }) as unknown as Plugin,
