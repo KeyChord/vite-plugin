@@ -9,17 +9,31 @@ export type PluginOptions = {
   vendor?: string[];
 };
 
-export default function keychord(options?: PluginOptions): Plugin[] {
+export default function keychord(options?: PluginOptions): any[] {
   const plugins: Plugin[] = [
     {
       name: "keychord",
       config(config) {
         const root = config.root ?? process.cwd();
         const srcDirpath = path.join(root, DEFAULT_INPUT_FILES_ROOT_DIRNAME);
+        let tsRoot = fs.existsSync(path.join(srcDirpath, "js"))
+          ? path.join(srcDirpath, "js")
+          : srcDirpath;
+
         const input = fs
-          .readdirSync(srcDirpath)
+          .readdirSync(tsRoot)
           .filter((file) => file.endsWith(".ts"))
-          .map((file) => path.join(DEFAULT_INPUT_FILES_ROOT_DIRNAME, file));
+          .map((file) => path.join(tsRoot, file));
+
+        if (tsRoot.endsWith("/js") && fs.existsSync(path.join(srcDirpath, "bin"))) {
+          const tsBinDirpath = path.join(srcDirpath, "bin");
+          input.push(
+            ...fs
+              .readdirSync(tsBinDirpath)
+              .filter((file) => file.endsWith(".ts"))
+              .map((file) => path.join(tsBinDirpath, file)),
+          );
+        }
 
         return {
           build: {
@@ -33,10 +47,7 @@ export default function keychord(options?: PluginOptions): Plugin[] {
               input,
 
               // We want to produce self-contained files
-              external: ['chord'],
-              output: {
-                codeSplitting: false,
-              },
+              external: ["chord"],
             },
           },
           ssr: {
@@ -44,21 +55,21 @@ export default function keychord(options?: PluginOptions): Plugin[] {
           },
         };
       },
-    }
+    },
   ];
 
   if (options?.vendor?.length) {
     plugins.push(
       viteStaticCopy({
         /** @see https://github.com/sapphi-red/vite-plugin-static-copy/issues/216 */
-        environment: 'ssr',
+        environment: "ssr",
         targets: options.vendor?.map((packageName) => ({
           src: `node_modules/${packageName}/js`,
           dest: "vendor",
           rename: { stripBase: 1 },
         })),
-      }) as unknown as Plugin
-    )
+      }) as unknown as Plugin,
+    );
   }
 
   return plugins;
