@@ -9,7 +9,7 @@ export type PluginOptions = {
   vendor?: string[];
 };
 
-export default function keychord(options?: PluginOptions): any[] {
+export default function chordPackage(options?: PluginOptions): any[] {
   const plugins: Plugin[] = [
     {
       name: "keychord",
@@ -23,17 +23,7 @@ export default function keychord(options?: PluginOptions): any[] {
         const input: Record<string, string> = {};
 
         for (const filename of fs.readdirSync(tsRoot).filter((file) => file.endsWith(".ts"))) {
-          // The standard for importing JavaScript files from chord TOML files `.toml` is to use #js
-          input[`js/${path.parse(filename).name}`] = path.join(tsRoot, filename);
-        }
-
-        if (tsRoot.endsWith("/js") && fs.existsSync(path.join(srcDirpath, "bin"))) {
-          const tsBinDirpath = path.join(srcDirpath, "bin");
-          for (const filename of fs
-            .readdirSync(tsBinDirpath)
-            .filter((file) => file.endsWith(".ts"))) {
-            input[`bin/${path.parse(filename).name}`] = path.join(tsBinDirpath, filename);
-          }
+          input[path.parse(filename).name] = path.join(tsRoot, filename);
         }
 
         return {
@@ -41,12 +31,12 @@ export default function keychord(options?: PluginOptions): any[] {
             // Since we target a "server" runtime (LLRT)
             ssr: true,
             emptyOutDir: false,
-            outDir: ".",
+            outDir: "js",
 
             rolldownOptions: {
               input,
 
-              // We want to produce self-contained files
+              // We need to produce self-contained files
               external: ["chord", ...(options?.vendor ?? [])],
             },
           },

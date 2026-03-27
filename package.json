@@ -1,11 +1,12 @@
 {
   "name": "@keychord/vite-plugin",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "files": [
     "exports",
     "src"
   ],
   "type": "module",
+  "types": "./exports/default.d.ts",
   "exports": {
     ".": {
       "types": "./exports/default.d.ts",
