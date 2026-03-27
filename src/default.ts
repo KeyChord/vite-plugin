@@ -2,6 +2,7 @@ import type { Plugin } from "vite-plus";
 import fs from "node:fs";
 import path from "node:path";
 import { viteStaticCopy } from "vite-plugin-static-copy";
+import cleanPlugin from "vite-plugin-clean";
 
 const DEFAULT_INPUT_FILES_ROOT_DIRNAME = "src";
 
@@ -20,28 +21,28 @@ export default function keychord(options?: PluginOptions): any[] {
           ? path.join(srcDirpath, "js")
           : srcDirpath;
 
-        const input = fs
-          .readdirSync(tsRoot)
-          .filter((file) => file.endsWith(".ts"))
-          .map((file) => path.join(tsRoot, file));
+        const input: Record<string, string> = {};
+
+        for (const filename of fs.readdirSync(tsRoot).filter((file) => file.endsWith(".ts"))) {
+          // The standard for importing JavaScript files from chord TOML files `.toml` is to use #js
+          input[`js/${path.parse(filename).name}`] = path.join(tsRoot, filename);
+        }
 
         if (tsRoot.endsWith("/js") && fs.existsSync(path.join(srcDirpath, "bin"))) {
           const tsBinDirpath = path.join(srcDirpath, "bin");
-          input.push(
-            ...fs
-              .readdirSync(tsBinDirpath)
-              .filter((file) => file.endsWith(".ts"))
-              .map((file) => path.join(tsBinDirpath, file)),
-          );
+          for (const filename of fs
+            .readdirSync(tsBinDirpath)
+            .filter((file) => file.endsWith(".ts"))) {
+            input[`bin/${path.parse(filename).name}`] = path.join(tsBinDirpath, filename);
+          }
         }
 
         return {
           build: {
             // Since we target a "server" runtime (LLRT)
             ssr: true,
-
-            // The standard for importing JavaScript files from chord TOML files `.toml` is to use #js
-            outDir: "js",
+            emptyOutDir: false,
+            outDir: ".",
 
             rolldownOptions: {
               input,
