@@ -53,8 +53,8 @@ export default function keychord(options?: PluginOptions): Plugin[] {
         /** @see https://github.com/sapphi-red/vite-plugin-static-copy/issues/216 */
         environment: 'ssr',
         targets: options.vendor?.map((packageName) => ({
-          src: `node_modules/${packageName}`,
-          dest: "js/vendor",
+          src: `node_modules/${packageName}/js`,
+          dest: "vendor",
           rename: { stripBase: 1 },
         })),
       }) as unknown as Plugin
