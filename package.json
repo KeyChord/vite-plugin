@@ -8,8 +8,14 @@
       "default": "./exports/default.js"
     }
   },
+  "files": [
+    "exports",
+    "src"
+  ],
   "devDependencies": {
+    "@keychord/tsconfig": "0.0.0-alpha.0",
     "@types/node": "^25.5.0",
+    "vite-plugin-dts": "^4.5.4",
     "vite-plus": "^0.1.14"
   },
   "packageManager": "pnpm@10.33.0"

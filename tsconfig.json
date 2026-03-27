@@ -1,0 +1,7 @@
+{
+  "extends": "@keychord/tsconfig",
+  "compilerOptions": {
+    "outDir": "./exports"
+  },
+  "include": ["src"]
+}
