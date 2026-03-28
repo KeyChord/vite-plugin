@@ -2,28 +2,32 @@ import type { Plugin } from "vite-plus";
 import fs from "node:fs";
 import path from "node:path";
 import { viteStaticCopy } from "vite-plugin-static-copy";
-
-const DEFAULT_INPUT_FILES_ROOT_DIRNAME = "src";
+import virtual from 'vite-plugin-virtual';
 
 export type PluginOptions = {
   vendor?: string[];
 };
 
 export default function chordPackage(options?: PluginOptions): any[] {
-  const plugins: Plugin[] = [
+  const plugins: any[] = [
+    virtual({
+      'virtual:empty': '',
+    }),
     {
       name: "keychord",
       config(config) {
         const root = config.root ?? process.cwd();
-        const srcDirpath = path.join(root, DEFAULT_INPUT_FILES_ROOT_DIRNAME);
-        let tsRoot = fs.existsSync(path.join(srcDirpath, "js"))
-          ? path.join(srcDirpath, "js")
-          : srcDirpath;
+        const srcJsDirpath = path.join(root, 'src/js');
+        let input: string | Record<string, string> = {};
 
-        const input: Record<string, string> = {};
+        if (fs.existsSync(srcJsDirpath) && fs.statSync(srcJsDirpath).isDirectory()) {
+          for (const filename of fs.readdirSync(srcJsDirpath).filter((file) => file.endsWith(".ts"))) {
+            input[path.parse(filename).name] = path.join(srcJsDirpath, filename);
+          }
+        }
 
-        for (const filename of fs.readdirSync(tsRoot).filter((file) => file.endsWith(".ts"))) {
-          input[path.parse(filename).name] = path.join(tsRoot, filename);
+        if (Object.keys(input).length === 0) {
+          input['noop'] = "virtual:empty";
         }
 
         return {
@@ -45,7 +49,7 @@ export default function chordPackage(options?: PluginOptions): any[] {
           },
         };
       },
-    },
+    } satisfies Plugin,
   ];
 
   if (options?.vendor?.length) {
@@ -55,10 +59,10 @@ export default function chordPackage(options?: PluginOptions): any[] {
         environment: "ssr",
         targets: options.vendor?.map((packageName) => ({
           src: `node_modules/${packageName}/js`,
-          dest: "js",
+          dest: ".",
           rename: { stripBase: 1 },
         })),
-      }) as unknown as Plugin,
+      })
     );
   }
 
