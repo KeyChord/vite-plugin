@@ -3,3 +3,4 @@ node_modules
 /exports
 pnpm-workspace.yaml
 pnpm-lock.yaml
+.claude/settings.local.json
